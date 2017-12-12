@@ -1,0 +1,97 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateFieldFileTables extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        $this->crateFilesTable();
+        echo "1. 'files' table created \n";
+
+        $this->crateFieldDocsTable();
+        echo "2. 'field_docs' table created \n";
+
+        $this->crateFieldImagesTable();
+        echo "3. 'field_images' table created \n";
+
+        $this->crateFieldAvatarsTable();
+        echo "4. 'field_avatars' table created \n";
+    }
+
+    public function crateFilesTable()
+    {
+        Schema::create('files', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('path')->nullable();
+            $table->string('type')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->integer('size')->unsigned()->nullable();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->tinyInteger('is_used')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    public function crateFieldDocsTable()
+    {
+        Schema::create('field_docs', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('file_id')->unsigned();
+            $table->morphs('field_docable');
+
+            $table->string('title')->nullable();
+            $table->integer('weight')->default(0);
+
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
+        });
+    }
+
+    public function crateFieldImagesTable()
+    {
+        Schema::create('field_images', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('file_id')->unsigned();
+            $table->morphs('field_imageable');
+
+            $table->string('alt')->nullable();
+            $table->string('title')->nullable();
+            $table->integer('weight')->default(0);
+
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
+        });
+    }
+
+    public function crateFieldAvatarsTable()
+    {
+        Schema::create('field_avatars', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('file_id')->unsigned();
+            $table->morphs('field_avatarable');
+
+            $table->string('alt')->nullable();
+            $table->string('title')->nullable();
+
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('field_avatars');
+
+        Schema::dropIfExists('field_images');
+
+        Schema::dropIfExists('field_docs');
+
+        Schema::dropIfExists('files');
+    }
+}

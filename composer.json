@@ -1,0 +1,39 @@
+{
+    "name": "fomvasss/laravel-field-file",
+    "description": "Management of taxonomy in Laravel projects",
+    "type": "composer-package",
+    "keywords": [
+        "fomvasss",
+        "laravel",
+        "file",
+        "field"
+    ],
+    "homepage": "https://github.com/fomvasss/laravel-field-file",
+    "homepage": "https://bitbucket.org/fomvasss/laravel-field-file",
+    "authors": [
+        {
+            "name": "Vasyl Fomin",
+            "email": "fomvasss@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php" : ">=7.0.0",
+        "illuminate/support": "5.3.*|5.4.*|5.5.*",
+        "illuminate/database": "5.3.*|5.4.*|5.5.*",
+        "intervention/image": "dev-master|~2,>=2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fomvasss\\FieldFile\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Fomvasss\\FieldFile\\FieldFileServiceProvider"
+            ]
+        }
+    }
+}
