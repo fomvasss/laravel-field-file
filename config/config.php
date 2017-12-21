@@ -57,8 +57,14 @@ return [
                     'image.*' => 'required|image|dimensions:min_width=50,min_height=50,max_width=5000,max_height=5000|max:20000',
                 ],
             ],
-            'path' => 'uploads/images',
+
+            /*
+             * Settings original image-maker (add default)
+             */
+            'path' => 'uploads/images', // root path for all  image-makers
             'compress' => 70,
+            'weight' => 1920,
+            'height' => 1080,
             'format' => 'jpg',
 
             /*

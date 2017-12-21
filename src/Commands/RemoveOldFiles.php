@@ -2,7 +2,6 @@
 
 namespace Fomvasss\FieldFile\Commands;
 
-use Fomvasss\FieldFile\FieldFileServiceProvider;
 use Fomvasss\FieldFile\Managers\BaseFileManager;
 use Illuminate\Console\Command;
 
@@ -39,8 +38,6 @@ class RemoveOldFiles extends Command
      */
     public function handle()
     {
-        $options = $this->options();
-
         $overHour = $this->argument('over');
 
         $this->runRemove($overHour);
@@ -52,5 +49,4 @@ class RemoveOldFiles extends Command
 
         $fileManager->deleteAllOldNonUsed($overHour);
     }
-
 }
