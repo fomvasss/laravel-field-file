@@ -1,13 +1,12 @@
 <?php
 
-namespace Fomvasss\FieldFile\Http\Controllers;
+namespace Fomvasss\FieldFile\Http\Controllers\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ResponseTrait
 {
-
     /**
      * @param $result
      * @return \Illuminate\Http\JsonResponse

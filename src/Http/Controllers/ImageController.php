@@ -2,9 +2,9 @@
 
 namespace Fomvasss\FieldFile\Http\Controllers;
 
-use Fomvasss\FieldFile\Http\Request\ImageRequest;
-use Fomvasss\FieldFile\Http\Request\ImagesRequest;
+use Fomvasss\FieldFile\Http\Controllers\Traits\ResponseTrait;
 use Fomvasss\FieldFile\Managers\ImageFileManager;
+use Illuminate\Http\Request;
 
 class ImageController extends BaseFileController
 {
@@ -19,32 +19,31 @@ class ImageController extends BaseFileController
     {
         $this->manager = $manager;
 
-        $this->allowedFieldNames = config(
-            'field_file.fields.image.allowed_names',
-            ['image', 'img', 'file']
-        );
+        $this->validationRules = config('field-file.fields.image.rules', []);
+
+        $this->allowedFieldNames = config('field-file.fields.image.allowed_names', ['image']);
     }
 
     /**
-     * @param \Fomvasss\FieldFile\Http\Request\ImageRequest $request
-     * @return int
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
      */
-    public function upload(ImageRequest $request)
+    public function upload(Request $request)
     {
-        $result = parent::uploadBase($request);
+        $result = parent::upload($request);
 
-        return $this->responseUpload(['image' => $result]);
+        return $this->responseUpload(['id' => $result]);
     }
 
     /**
-     * @param \Fomvasss\FieldFile\Http\Request\ImagesRequest $request
-     * @return array
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
      */
-    public function uploadMultiple(ImagesRequest $request)
+    public function uploadMultiple(Request $request)
     {
-        $result = parent::uploadMultipleBase($request);
+        $result = parent::uploadMultiple($request);
 
-        return $this->responseUpload(['images' => $result]);
+        return $this->responseUpload(['id' => $result]);
     }
 
     /**

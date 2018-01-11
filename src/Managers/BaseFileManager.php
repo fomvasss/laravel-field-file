@@ -63,11 +63,14 @@ class BaseFileManager implements FileManagerInterface
         $mimeType = $requestFile->getMimeType();
         $fileSize = $requestFile->getSize();
         $fileExtension = $requestFile->getClientOriginalExtension();
+        $originalFileName = str_slug(rtrim($requestFile->getClientOriginalName(), '.'.$fileExtension));
 
         return [
             'path' => $attr['path'] ?? null,
             'type' => $attr['type'] ?? null,
             'extension' => $fileExtension,
+            'original_name' => $originalFileName,
+            'custom_file_name' => str_slug($attr['custom_file_name'] ?? ''),
             'mime_type' => $mimeType,
             'size' => $fileSize,
             'user_id' => $userId,
@@ -82,9 +85,26 @@ class BaseFileManager implements FileManagerInterface
     {
         $userId = $fileAttributes['user_id'] ?? '';
 
-        $fileName = time() . '_' . rand(1000, 9999) . ($userId ? '_' . $userId : '');
+        if (!empty($fileAttributes['custom_file_name'])) {
+            $fileName = $this->getUniqueFileName($fileAttributes['path'], $fileAttributes['custom_file_name'], $fileAttributes['extension']);
+        } elseif (config('field-file.save_original_name')) {
+            $fileName = $this->getUniqueFileName($fileAttributes['path'], $fileAttributes['original_name'], $fileAttributes['extension']);
+        } else {
+            $fileName = time() . '-' . str_random(5) . ($userId ? '-' . $userId : '');
+        }
 
         return $fileName;
+    }
+
+    protected function getUniqueFileName($path, $name, $extension)
+    {
+        $uniqueName = $name;
+        $i = 0;
+        while (file_exists($path .'/'. $uniqueName .'.'. $extension)) {
+            $uniqueName = $name .'-'. (++$i);
+        }
+
+        return $uniqueName;
     }
 
     /**
@@ -97,6 +117,15 @@ class BaseFileManager implements FileManagerInterface
         $model = $this->fileModel->create(array_merge(['name' => $fileDiskName], $attribute));
 
         return $model;
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function findOrFail($id)
+    {
+        return $this->fileModel->findOrFail($id);
     }
 
     /**
@@ -157,7 +186,7 @@ class BaseFileManager implements FileManagerInterface
      */
     public function deleteAllOldNonUsed(int $older = null): int
     {
-        $hours = ($older > 0) ?: config('field_file.time_limit_old_file', 72);
+        $hours = ($older > 0) ?: config('field-file.time_limit_old_file', 72);
         $date = \Carbon\Carbon::now()->addHour(-1*$hours);
 
         $files = $this->fileModel->where('updated_at', '<', $date)->where('is_used', 0)->get();
@@ -181,7 +210,7 @@ class BaseFileManager implements FileManagerInterface
      */
     public function countUploadFilesByUserPerTime(int $userId, int $hours = null): int
     {
-        $hours = ($hours > 0) ?: config('field_file.download_limit.hours', 24);
+        $hours = ($hours > 0) ?: config('field-file.download_limit.hours', 24);
         $date = \Carbon\Carbon::now($hours)->addHour(-1 * $hours);
 
         return $this->fileModel->where('user_id', $userId)->where('created_at', '>', $date)->count();

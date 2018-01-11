@@ -2,9 +2,9 @@
 
 namespace Fomvasss\FieldFile\Http\Controllers;
 
-use Fomvasss\FieldFile\Http\Request\DocumentRequest;
-use Fomvasss\FieldFile\Http\Request\DocumentsRequest;
+use Fomvasss\FieldFile\Http\Controllers\Traits\ResponseTrait;
 use Fomvasss\FieldFile\Managers\DocumentFileManager;
+use Illuminate\Http\Request;
 
 class DocumentController extends BaseFileController
 {
@@ -19,32 +19,31 @@ class DocumentController extends BaseFileController
     {
         $this->manager = $manager;
 
-        $this->allowedFieldNames = config(
-            'field_file.fields.documents.allowed_names',
-            ['document', 'doc', 'file']
-        );
+        $this->validationRules = config('field-file.fields.document.rules', []);
+
+        $this->allowedFieldNames = config('field-file.fields.document.allowed_names', ['file']);
     }
 
     /**
-     * @param \Fomvasss\FieldFile\Http\Request\DocumentRequest $request
-     * @return \Fomvasss\FieldFile\Models\File|int|mixed
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
      */
-    public function upload(DocumentRequest $request)
+    public function upload(Request $request)
     {
-        $result = parent::uploadBase($request);
+        $result = parent::upload($request);
 
-        return $this->responseUpload(['document' => $result]);
+        return $this->responseUpload(['id' => $result]);
     }
 
     /**
-     * @param \Fomvasss\FieldFile\Http\Request\DocumentsRequest $request
-     * @return array
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
      */
-    public function uploadMultiple(DocumentsRequest $request)
+    public function uploadMultiple(Request $request)
     {
-        $result = parent::uploadMultipleBase($request);
+        $result = parent::uploadMultiple($request);
 
-        return $this->responseUpload(['documents' => $result]);
+        return $this->responseUpload(['id' => $result]);
     }
 
     /**

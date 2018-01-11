@@ -21,14 +21,14 @@ class DocumentFileManager extends BaseFileManager
         parent::__construct($fileModel);
 
         $this->destinationPath = config(
-            'field_file.fields.document.path',
+            'field-file.fields.document.path',
             'uploads/documents'
         );
     }
 
     /**
      * @param $requestFile
-     * @param array $attr [path, type]
+     * @param array $attr [path, type, custom_file_name]
      * @param bool $returnModel
      * @return \Fomvasss\FieldFile\Models\File|mixed
      */
@@ -39,6 +39,7 @@ class DocumentFileManager extends BaseFileManager
 
         $fileAttributes = $this->getFileAttributes($requestFile, [
             'type' => $attr['type'] ??  'document',
+            'custom_file_name' => $attr['custom_file_name'] ?? '',
             'path' => $this->destinationPath
         ]);
 

@@ -23,8 +23,8 @@ class OriginalImageMaker extends BaseImageMaker
     {
         Image::make($this->image)
             ->resize($this->weight, $this->height, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
+                $this->aspectRatio ? $constraint->aspectRatio() : null;
+                $this->aspectRatio ? $constraint->upsize() : null;
             })
             ->save($this->path . '/' . $this->fileName.'.'.$this->format, $this->compress);
     }

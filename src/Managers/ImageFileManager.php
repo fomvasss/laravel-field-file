@@ -23,14 +23,14 @@ class ImageFileManager extends BaseFileManager
         parent::__construct($fileModel);
 
         $this->destinationPath = config(
-            'field_file.fields.image.path',
+            'field-file.fields.image.path',
             'uploads/images'
         );
     }
 
     /**
      * @param $requestFile
-     * @param array $attr [path, image_makers[], type]
+     * @param array $attr [path, image_makers[], type, custom_file_name]
      * @param bool $returnModel
      * @return \Fomvasss\FieldFile\Models\File|mixed
      */
@@ -43,6 +43,7 @@ class ImageFileManager extends BaseFileManager
 
         $fileAttributes = $this->getFileAttributes($requestFile, [
             'type' => $attr['type'] ?? 'image',
+            'custom_file_name' => $attr['custom_file_name'] ?? '',
             'path' => $this->destinationPath
         ]);
 
@@ -61,7 +62,7 @@ class ImageFileManager extends BaseFileManager
     public function putFile($requestFile, string $fileName)
     {
         $imageMakers = array_unique(array_merge(
-            config('field_file.fields.image.makers', []),
+            config('field-file.fields.image.makers', []),
             $this->imageMakers,
             [\Fomvasss\FieldFile\Services\ImageMaker\OriginalImageMaker::class]
         ));
@@ -74,7 +75,7 @@ class ImageFileManager extends BaseFileManager
             }
         }
 
-        $format = config('field_file.fields.image.format', 'jpg');
+        $format = config('field-file.fields.image.format', 'jpg');
         $fileName = $fileName .'.'. $format;
 
         return $fileName;

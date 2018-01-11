@@ -2,6 +2,8 @@
 
 namespace Fomvasss\FieldFile\Http\Controllers;
 
+use Fomvasss\FieldFile\Http\Controllers\Traits\RequestValidationTrait;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 /**
@@ -11,19 +13,26 @@ use Illuminate\Routing\Controller;
  */
 abstract class BaseFileController extends Controller
 {
-    public $manager;
+    use RequestValidationTrait;
 
-    public $allowedFieldNames;
+    protected $manager;
+
+    protected $allowedFieldNames;
+
+    public $currentFieldName = 'file';
 
     /**
      * @param \Illuminate\Http\Request $request
      * @return int
      */
-    public function uploadBase($request)
+    public function upload(Request $request)
     {
         foreach ($this->allowedFieldNames as $fieldName) {
+            $this->validate($request, $fieldName);
+
             if ($request->hasFile($fieldName)) {
                 $result = $this->manager->store($request->file($fieldName));
+                $this->currentFieldName = $fieldName;
 
                 return $result;
             }
@@ -36,18 +45,26 @@ abstract class BaseFileController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return array
      */
-    public function uploadMultipleBase($request)
+    public function uploadMultiple(Request $request)
     {
         $ids = [];
 
         foreach ($this->allowedFieldNames as $fieldName) {
             if ($request->hasFile($fieldName)) {
+                $this->validateArray($request, $fieldName);
+
                 $res = $this->manager->storeMultiple($request->file($fieldName));
                 $ids = array_merge($ids, $res);
+                $this->currentFieldName = $fieldName;
             }
         }
 
         return $ids;
+    }
+
+    public function show($id)
+    {
+        return $this->manager->findOrFail($id);
     }
 
     /**
@@ -59,6 +76,17 @@ abstract class BaseFileController extends Controller
         $url = $this->manager->getPath($id);
 
         return response()->file($url);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     */
+    public function getUrl($id)
+    {
+        $url = $this->manager->getPath($id);
+
+        return url($url);
     }
 
     /**

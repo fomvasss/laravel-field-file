@@ -32,10 +32,12 @@ abstract class BaseImageMaker
         $this->image = $image;
         $this->path = $path;
         $this->fileName = $fileName;
-        $this->format = config('field_file.fields.image.format', 'jpg');
-        $this->compress = config('field_file.fields.image.compress', 70);
-        $this->weight = config('field_file.fields.image.weight', 1920);
-        $this->height = config('field_file.fields.image.height', 1080);
+        $this->format = config('field-file.fields.image.format', 'jpg');
+        $this->compress = config('field-file.fields.image.compress', 70);
+        $this->weight = config('field-file.fields.image.weight', 1920);
+        $this->height = config('field-file.fields.image.height', 1080);
+        $this->aspectRatio = config('field-file.fields.image.aspect_ratio', true);
+        $this->upsize = config('field-file.fields.image.upsize', true);
 
         $this->user = \Auth::user();
 

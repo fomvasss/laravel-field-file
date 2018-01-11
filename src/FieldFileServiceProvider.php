@@ -17,10 +17,10 @@ class FieldFileServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('field_file.php'),
+            __DIR__.'/../config/field-file.php' => config_path('field-file.php'),
         ], 'field-file-config');
 
-        if (config('field_file.routes.use', true)) {
+        if (config('field-file.routes.use', true)) {
             $this->loadRoutesFrom(__DIR__.'/routes.php');
         }
 
@@ -28,7 +28,7 @@ class FieldFileServiceProvider extends ServiceProvider
             $timestamp = date('Y_m_d_His', time());
 
             $this->publishes([
-                __DIR__.'/../database/migrations/create_field_file_tables.php.stub' => $this->app->databasePath()."/migrations/{$timestamp}_create_field_file_tables.php",
+                __DIR__.'/../database/migrations/create_field-file_tables.php.stub' => $this->app->databasePath()."/migrations/{$timestamp}_create_field-file_tables.php",
             ], 'field-file-migrations');
         }
 
@@ -52,7 +52,7 @@ class FieldFileServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'field_file.php');
+        $this->mergeConfigFrom(__DIR__.'/../config/field-file.php', 'field-file-config');
 
         $this->app->singleton(ImageFileManager::class);
         $this->app->singleton(DocumentFileManager::class);

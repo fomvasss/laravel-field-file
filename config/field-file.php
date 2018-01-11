@@ -22,6 +22,8 @@ return [
         'as' => 'file.'
     ],
 
+    'save_original_name' => false,
+
     /*
      * File fields types
      */
@@ -33,11 +35,11 @@ return [
              */
             'rules' => [
                 'single' => [
-                    'document' => 'required|file|min:1|max:20000|mimes:pdf,doc,docx,txt,xls,xlsx,png,jpeg,jpg,gif'
+                    'item' => 'required|file|min:1|max:20000|mimes:pdf,doc,docx,txt,xls,xlsx,png,jpeg,jpg,gif'
                 ],
                 'multiple' => [
-                    'document' => 'required|array|max:10',
-                    'document.*' => 'required|file|min:1|max:20000|mimes:pdf,doc,docx,txt,xls,xlsx,png,jpeg,jpg,gif'
+                    'array' => 'required|array|max:10',
+                    'item' => 'required|file|min:1|max:20000|mimes:pdf,doc,docx,txt,xls,xlsx,png,jpeg,jpg,gif'
                 ],
             ],
             'path' => 'uploads/documents',
@@ -50,22 +52,25 @@ return [
              */
             'rules' => [
                 'single' => [
-                    'image' => 'required|image|dimensions:min_width=50,min_height=50,max_width=5000,max_height=5000|max:20000', //|mimes:png,jpeg,jpg,gif
+                    'item' => 'required|image|dimensions:min_width=50,min_height=50,max_width=5000,max_height=5000|max:20000', //|mimes:png,jpeg,jpg,gif
                 ],
                 'multiple' => [
-                    'image' => 'required|array|max:10',
-                    'image.*' => 'required|image|dimensions:min_width=50,min_height=50,max_width=5000,max_height=5000|max:20000',
+                    'array' => 'required|array|max:10',
+                    'item' => 'required|image|dimensions:min_width=50,min_height=50,max_width=5000,max_height=5000|max:20000',
                 ],
             ],
 
-            /*
-             * Settings original image-maker (add default)
-             */
             'path' => 'uploads/images', // root path for all  image-makers
+
+            /*
+             * Settings original image-maker
+             */
             'compress' => 70,
             'weight' => 1920,
             'height' => 1080,
             'format' => 'jpg',
+            'aspect_ratio' => true,
+            'upsize' => true,
 
             /*
              * Custom Intervention-image maker class
@@ -85,8 +90,10 @@ return [
             ],
         ],
     ],
-    'json_response_request' => [
-        'key_name' => 'errors',
+    'response' => [
+        'json' => [
+            'error_key_name'  => 'errors',
+        ]
     ],
 
     /*
@@ -96,6 +103,6 @@ return [
     * This file can by delete
     *
     */
-    'time_limit_old_file' => 24, // время, после которого можно удалять не используемый файл с диска и бызы, часов.
+    'time_limit_old_file' => 24, // время, после которого доступно удалять не используемый файл с диска и базы, час.
 
 ];

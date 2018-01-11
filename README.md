@@ -12,7 +12,7 @@
 	Fomvasss\Taxonomy\FieldFileServiceProvider::class,
 ```
 
-Опубликовать конфиг, миграцию, файлы локализации:
+Опубликовать конфиг (`field-file.php`), миграцию, файлы локализации:
 ```bash
 	php artisan vendor:publish --provider="Fomvasss\FieldFile\FieldFileServiceProvider"
 ```
@@ -30,16 +30,34 @@
 **Документы:**
 * POST: /file/document/upload
 * POST: /file/document/upload-multiple
+* GET: /file/document/show/{id}
+* GET: /file/document/get-url/{id}
 * GET: /file/document/get-file/{id}
 * GET: /file/document/delete/{id}
     
 **Изображения:**
 * POST: /file/image/upload
 * POST: /file/image/upload-multiple
+* GET: /file/image/show/{id}
+* GET: /file/image/get-url/{id}
 * GET: /file/image/get-file/{id}
 * GET: /file/image/delete/{id}
 
-Если не будут используватся стандартные роуты и контроллеры пакате, то в конфигах их можно отключить: `'routes.use' => false`
+Если не будут используватся стандартные роуты и контроллеры, то в конфигах их можно отключить: `'routes.use' => false`
+
+Если будут использоватся свои контроллеры, то они могут наследовать базовый контроллер пакета:
+```php
+Fomvasss\FieldFile\Http\Controllers\BaseFileController
+```
+и в которых в конструкторе указать нужный менеджер, правила валидации (например с конфига) и доступные имена полей файлов:
+```php
+public function __construct(\Fomvasss\FieldFile\Managers\ImageFileManager $manager)
+{
+	$this->manager = $manager;
+	$this->validationRules = config('field-file.fields.image.rules'); //если не указывать - то будет только проверка на файл
+	$this->allowedFieldNames = ['image', 'img', 'file'];
+}
+```
 
 Можно использовать следующии менеджеры для соотв. типов файлов:
 ```php
@@ -65,26 +83,26 @@ public function upload($request)
 }
 ```
 
-Если будут использоватся свои контроллеры, то они могут наследовать базовый контроллер пакета:
-```php
-Fomvasss\FieldFile\Http\Controllers\BaseFileController
-```
-и в которых в конструкторе указать нужный менеджер и доступные имена полей:
-```php
-public function __construct(\Fomvasss\FieldFile\Managers\ImageFileManager $manager)
-{
-	$this->manager = $manager;
-	$this->allowedFieldNames = ['image', 'img', 'file'];
-}
-```
-
 Метод `store($requestFile, array $attr = [], $returnModel = false)` менеджера картинок принимает:
 - $requestFile - файл для загрузки
 - $attr - массив параметров:
 	- path - начальный путь к папке для файла (если нет - будет по умолчанию, заданные в конфигу),
 	- image_makers[] - массив своих классов построителей картинок, 
 	- type - тип файла (image, document,...)
-- $returnModel - тип возвращаемого результата (по молчанию ID файла)
+	- custom_file_name - заданное имя для файла
+- $returnModel - тип возвращаемого результата (по умолчанию ID файла)
+
+Например:
+```php
+<?php
+$result = $this->manager->store($request->file('image'), [
+    'path' => 'uploads/images',
+    'image_makers' => [App\Services\MediumImage::class],
+    'type' => 'image',
+    'custom_file_name' => 'файл для статьи'
+]);
+```
+Все поля массива не обязательны
 
 Аналогичные параметры принимает менеджер документов, кроме массива image_makers
 
@@ -111,7 +129,7 @@ public function make()
 Fomvasss\FieldFile\Services\ImageMaker\ExampleImageMaker
 ```
 ### Использование связей в своих моделях
-Вставте нужные методы для соотв. полей в свои модели
+Вставьте нужные методы для соотв. полей в свои модели
 ```php
 <?php
 	/**
@@ -146,6 +164,7 @@ Fomvasss\FieldFile\Services\ImageMaker\ExampleImageMaker
 ```
 
 или же просто используйте трейт:
+
 ```php
 use \Fomvasss\FieldFile\Models\Traits\HasFieldFile;
 ```
@@ -173,6 +192,7 @@ $post->fieldAvatar()->save(new \Fomvasss\FieldFile\Models\FieldAvatar($fieldAvat
 ### Отвязывание поля файла от своей модели
 Для отвязывания поля-файла от своей модели, вы можете просто удалить нужный файл, используя метод `safeDelete()` соотв. менеджера.
 Файл станет не используемым (`is_used` = 0) и после некоторого времени его можно удалять полносью с диска и бд используя метод `delete()` или специальную, ниже описанную, команду `php artisan field-file`
+__! Файлы-изображения созданные с помощью своих построителей нужно удалять с помощью своих методов__
 
 ### Команды работы с пакетом
 Удалить все неиспользуемые файлы с бд и диска, которые были загружены больше 7 часов назад: 

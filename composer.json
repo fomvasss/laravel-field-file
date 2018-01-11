@@ -6,7 +6,9 @@
         "fomvasss",
         "laravel",
         "file",
-        "field"
+        "field",
+        "image",
+        "upload"
     ],
     "homepage": "https://github.com/fomvasss/laravel-field-file",
     "homepage": "https://bitbucket.org/fomvasss/laravel-field-file",
