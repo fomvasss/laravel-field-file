@@ -13,20 +13,20 @@ class CreateFieldFileTables extends Migration
      */
     public function up()
     {
-        $this->crateFilesTable();
+        $this->createFilesTable();
         echo "1. 'files' table created \n";
 
-        $this->crateFieldDocsTable();
+        $this->createFieldDocsTable();
         echo "2. 'field_docs' table created \n";
 
-        $this->crateFieldImagesTable();
+        $this->createFieldImagesTable();
         echo "3. 'field_images' table created \n";
 
-        $this->crateFieldAvatarsTable();
+        $this->createFieldAvatarsTable();
         echo "4. 'field_avatars' table created \n";
     }
 
-    public function crateFilesTable()
+    public function createFilesTable()
     {
         Schema::create('files', function (Blueprint $table) {
             $table->increments('id');
@@ -41,7 +41,7 @@ class CreateFieldFileTables extends Migration
         });
     }
 
-    public function crateFieldDocsTable()
+    public function createFieldDocsTable()
     {
         Schema::create('field_docs', function (Blueprint $table) {
             $table->increments('id');
@@ -55,7 +55,7 @@ class CreateFieldFileTables extends Migration
         });
     }
 
-    public function crateFieldImagesTable()
+    public function createFieldImagesTable()
     {
         Schema::create('field_images', function (Blueprint $table) {
             $table->increments('id');
@@ -70,7 +70,7 @@ class CreateFieldFileTables extends Migration
         });
     }
 
-    public function crateFieldAvatarsTable()
+    public function createFieldAvatarsTable()
     {
         Schema::create('field_avatars', function (Blueprint $table) {
             $table->increments('id');

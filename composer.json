@@ -1,6 +1,6 @@
 {
     "name": "fomvasss/laravel-field-file",
-    "description": "Management of taxonomy in Laravel projects",
+    "description": "Пакет для управления файловимы полями в Laravel",
     "type": "composer-package",
     "keywords": [
         "fomvasss",

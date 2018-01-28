@@ -52,7 +52,7 @@ class FieldFileServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/field-file.php', 'field-file-config');
+        $this->mergeConfigFrom(__DIR__.'/../config/field-file.php', 'field-file');
 
         $this->app->singleton(ImageFileManager::class);
         $this->app->singleton(DocumentFileManager::class);
